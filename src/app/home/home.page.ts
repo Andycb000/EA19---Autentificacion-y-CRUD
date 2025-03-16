@@ -5,6 +5,10 @@ import { Task } from '../task.service';
 import { TaskService } from '../task.service';
 import { Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { AlertController } from '@ionic/angular';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-home',
@@ -33,7 +37,7 @@ export class HomePage implements OnInit {
   editedTaskName: string = '';
   editedAuthorName: string = '';
 
-  constructor(private taskService: TaskService) { }
+  constructor(private taskService: TaskService, private router: Router, private authService: AuthService, private alertController: AlertController) { }
 
   ngOnInit() {
     this.loadTasks();
@@ -108,4 +112,18 @@ export class HomePage implements OnInit {
       .catch((err: unknown) => console.error('Error al actualizar cancion: ', err));
   }
 
+  async onLogout() {
+    try {
+      await this.authService.logout(); 
+      this.router.navigate(['/login']); 
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'No se pudo cerrar sesión. Inténtalo de nuevo.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+    }
+  }
 }

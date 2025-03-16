@@ -8,7 +8,7 @@ import { environment } from './environments/environment';
 
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 
-
+import { provideAuth, getAuth } from '@angular/fire/auth';
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 
@@ -19,6 +19,7 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+    provideAuth(() => getAuth()), 
     provideFirestore(() => getFirestore()),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideIonicAngular(),
