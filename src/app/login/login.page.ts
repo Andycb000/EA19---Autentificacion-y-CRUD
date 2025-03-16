@@ -59,7 +59,7 @@ export class LoginPage implements OnInit {
   }
 
   onSignup() {
-    this.router.navigate(['/signup']);
+    this.router.navigate(['/sign-up']);
   }
 
   onReset() {
