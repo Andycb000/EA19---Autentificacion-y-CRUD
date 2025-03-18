@@ -31,11 +31,14 @@ export class HomePage implements OnInit {
   tasks$!: Observable<Task[]>;
   newTaskName: string = '';
   newAuthorName: string = '';
+  newLinkName: string = '';
+
 
   //almacenes temporales para las variables que se van a editarr
   editingTaskId: string | null = null;
   editedTaskName: string = '';
   editedAuthorName: string = '';
+  editedLinkName: string = '';
 
   constructor(private taskService: TaskService, private router: Router, private authService: AuthService, private alertController: AlertController) { }
 
@@ -50,6 +53,7 @@ export class HomePage implements OnInit {
   addTask() {
     const name = this.newTaskName.trim();
     const author = this.newAuthorName.trim();
+    const link = this.newLinkName.trim();
 
     if (!name) {
       alert('El nombre de cancion es obligatorio');
@@ -61,7 +65,12 @@ export class HomePage implements OnInit {
       return;
     }
 
-    const newTask: Task = { name , author};
+    if (!link) {
+      alert('El enlace de la canción es obligatorio');
+      return;
+    }
+
+    const newTask: Task = { name, author, link };
 
     this.taskService.addTask(newTask)
       .then(() => {
@@ -84,6 +93,7 @@ export class HomePage implements OnInit {
     this.editingTaskId = task.id!;
     this.editedTaskName = task.name;
     this.editedAuthorName = task.author;
+    this.editedLinkName = task.link; // Agregar el campo 'link'
   }
 
   //guardar los cambios de la edicion
@@ -91,25 +101,22 @@ export class HomePage implements OnInit {
   saveEdit(taskId: string) {
     const name = this.editedTaskName.trim();
     const author = this.editedAuthorName.trim();
+    const link = this.editedLinkName.trim();
 
-    if (!name) {
-      alert('El nombre de cancion es obligatorio');
+    if (!name || !author || !link) {
+      alert('Todos los campos son obligatorios');
       return;
     }
 
-    if (!author) {
-      alert('El nombre del autor es obligatorio');
-      return;
-    }
-
-    this.taskService.updateTask(taskId, { name , author})
+    this.taskService.updateTask(taskId, { name, author, link })
       .then(() => {
-        console.log('Cancion actualizada');
-        this.editingTaskId = null;    // Terminamos la edición
-        this.editedTaskName = '';     // Limpiamos el campo de edición
-        this.editedAuthorName = '';     
+        console.log('Canción actualizada');
+        this.editingTaskId = null;
+        this.editedTaskName = '';
+        this.editedAuthorName = '';
+        this.editedLinkName = ''; // Limpiar el campo 'link'
       })
-      .catch((err: unknown) => console.error('Error al actualizar cancion: ', err));
+      .catch((err: unknown) => console.error('Error al actualizar canción:', err));
   }
 
   async onLogout() {
